@@ -1,17 +1,13 @@
 name: 每日更新开奖数据
 
-# 作用：每天定时跑一次「取数小助手」，把最新开奖写进 data.js / data.json。
-# 数据文件一变更，托管的静态站会自动重新部署 —— 访客打开就是最新数据，不需要任何点击。
-#
-# 时间：UTC 14:40 = 北京时间 22:40（双色球 21:15 / 大乐透 21:25 开奖之后再跑）
-
 on:
   schedule:
+    # UTC 14:40 = 北京 22:40（当天开奖都已公布）
     - cron: '40 14 * * *'
-  workflow_dispatch:        # 也可以在 Actions 页面手动点一次「Run workflow」
+  workflow_dispatch:
 
 permissions:
-  contents: write           # 需要写权限才能把新数据提交回仓库
+  contents: write
 
 jobs:
   update:
@@ -26,19 +22,62 @@ jobs:
           node-version: '20'
 
       - name: 抓取最新开奖（写到 data.js / data.json）
-        env:
-          XY_OUT_BASE: data
-          XY_ISSUES: '200'
-        run: node 取数小助手.js
-
-      - name: 若有变化则提交
+        id: fetch
         run: |
-          if git diff --quiet -- data.js data.json; then
-            echo "数据没有变化，跳过提交"
-            exit 0
-          fi
+          set +e
+          {
+            echo "时间: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "Node:  $(node -v)"
+            echo "出口 IP: $(curl -s --max-time 10 https://api.ipify.org || echo 取不到)"
+            echo
+            echo "=== 连通性自检（裸访问，不带任何 header）==="
+            for u in "https://www.cwl.gov.cn/" "https://webapi.sporttery.cn/"; do
+              printf '%-38s ' "$u"
+              curl -sS -o /dev/null -w 'HTTP %{http_code}  %{time_total}s\n' --max-time 25 "$u"
+            done
+            echo
+            echo "=== 连通性自检（模拟真实请求）==="
+            printf '%-38s ' "福彩 findDrawNotice"
+            curl -sS -o /dev/null -w 'HTTP %{http_code}  %{time_total}s\n' --max-time 25 \
+              -H 'Accept: application/json,*/*' \
+              -H 'Referer: https://www.cwl.gov.cn/' \
+              'https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNotice?name=ssq&issueCount=5'
+            printf '%-38s ' "体彩 getHistoryPageListV1"
+            curl -sS -o /dev/null -w 'HTTP %{http_code}  %{time_total}s\n' --max-time 25 \
+              -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' \
+              -H 'Referer: https://www.sporttery.cn/' \
+              'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=5&isVerify=1&pageNo=1'
+            echo
+            echo "=== 取数过程 ==="
+            node 取数小助手.js 2>&1
+            echo "取数退出码: $?"
+          } 2>&1 | tee _diag.txt
+
+          code=$(grep -c '✓ 200 期' _diag.txt)
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      - name: 提交（失败时留自检报告，成功时有变化才提交）
+        run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data.js data.json
+
+          if [ "${{ steps.fetch.outputs.code }}" != "2" ]; then
+            echo "取数未完全成功，把自检报告一并提交，便于排查"
+            git add -f _diag.txt
+          else
+            rm -f _diag.txt
+            git add data.js data.json
+          fi
+
+          if git diff --cached --quiet; then
+            echo "没有需要提交的变化"
+            exit 0
+          fi
           git commit -m "data: 自动更新开奖数据 $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
+
+      - name: 取数失败则标红
+        if: steps.fetch.outputs.code != '2'
+        run: |
+          echo "::error::取数未成功（只拿到 ${{ steps.fetch.outputs.code }}/2 个彩种），详见 _diag.txt"
+          exit 1
