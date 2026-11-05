@@ -1,0 +1,44 @@
+name: 每日更新开奖数据
+
+# 作用：每天定时跑一次「取数小助手」，把最新开奖写进 data.js / data.json。
+# 数据文件一变更，托管的静态站会自动重新部署 —— 访客打开就是最新数据，不需要任何点击。
+#
+# 时间：UTC 14:40 = 北京时间 22:40（双色球 21:15 / 大乐透 21:25 开奖之后再跑）
+
+on:
+  schedule:
+    - cron: '40 14 * * *'
+  workflow_dispatch:        # 也可以在 Actions 页面手动点一次「Run workflow」
+
+permissions:
+  contents: write           # 需要写权限才能把新数据提交回仓库
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 准备 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 抓取最新开奖（写到 data.js / data.json）
+        env:
+          XY_OUT_BASE: data
+          XY_ISSUES: '200'
+        run: node 取数小助手.js
+
+      - name: 若有变化则提交
+        run: |
+          if git diff --quiet -- data.js data.json; then
+            echo "数据没有变化，跳过提交"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.js data.json
+          git commit -m "data: 自动更新开奖数据 $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
