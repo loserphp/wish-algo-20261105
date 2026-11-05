@@ -1,9 +1,8 @@
 name: 每日更新开奖数据
 
 on:
-  schedule:
-    # UTC 14:40 = 北京 22:40（当天开奖都已公布）
-    - cron: '40 14 * * *'
+  # 定时任务已迁到本机 Windows 任务计划（见 发布说明.md 第三节）
+  # 原因：GitHub 的境外 runner 被两个接口的地域风控挡住，实测福彩 403、体彩 567
   workflow_dispatch:
 
 permissions:
