@@ -107,6 +107,15 @@ input:focus,textarea:focus,select:focus{border-color:var(--p);box-shadow:0 0 0 3
 .btn.ghost{background:transparent;border-color:var(--line);color:var(--dim);font-weight:500;padding:6px 10px;font-size:12px}
 .btn.ghost:hover{color:var(--txt);border-color:var(--line2);background:#141d33}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.advbox{margin-top:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.012);padding:0 12px}
+.advbox>summary{cursor:pointer;padding:10px 0;font-size:12px;color:var(--dim);list-style:none;user-select:none}
+.advbox>summary::-webkit-details-marker{display:none}
+.advbox>summary::before{content:'▸ ';color:var(--dim2)}
+.advbox[open]>summary::before{content:'▾ '}
+.advbox>summary:hover{color:var(--txt)}
+.advbox .advnote{color:var(--dim2);font-size:11px;margin-left:8px}
+.advbox .btnrow{margin:0 0 10px}
+.advbox code{font-family:var(--mono);font-size:11px;color:var(--cyan,#5fd0ff)}
 
 /* ---------- pipeline diagram ---------- */
 .pipe{display:flex;flex-direction:column;gap:0}
@@ -277,14 +286,19 @@ table.bt tr:last-child td{border-bottom:none}
 
           <button class="btn primary" id="run">生 成 号 码</button>
           <div class="btnrow">
-            <button class="btn" id="importBtn">导入数据文件</button>
-            <button class="btn ghost" id="fillDemo">载入历史数据</button>
-            <button class="btn ghost" id="fillRandomHist">随机历史(演示)</button>
             <button class="btn ghost" id="loadToday">读取今日环境</button>
-            <button class="btn ghost" id="clearHist">清空历史</button>
           </div>
+          <details class="advbox">
+            <summary>手动导入 / 覆盖历史数据<span class="advnote">联网版每天自动更新，一般用不到</span></summary>
+            <div class="btnrow">
+              <button class="btn" id="importBtn">导入数据文件</button>
+              <button class="btn ghost" id="fillDemo">载入示例历史</button>
+              <button class="btn ghost" id="clearHist">清空历史</button>
+            </div>
+            <div class="hintline">「载入示例历史」只是演示用的假数据，不会自动更新；真实数据请用「导入数据文件」选 <code>许愿算法1.0.data.json</code>。</div>
+          </details>
           <input type="file" id="dataFile" accept=".json,application/json" style="display:none">
-          <div class="hintline" id="importInfo">导入来源：双击「取数小助手.cmd」生成 许愿算法1.0.data.json，再点上方「导入数据文件」<br>（页面本身无需联网，不导入也能用手工粘贴正常出号）</div>
+          <div class="hintline" id="importInfo">尚未载入历史数据。联网版会自动载入；离线版双击「更新数据.cmd」生成数据后刷新本页即可。</div>
         </div>
       </div>
 
@@ -4584,7 +4598,6 @@ function init() {
   $('history').addEventListener('input', updateHistInfo);
   $('game').addEventListener('change', function () { updateHistInfo(); renderBaseInfo(); $('history').value = ''; $('prev').value = ''; $('hot').value = ''; });
   $('fillDemo').addEventListener('click', fillDemoHistory);
-  $('fillRandomHist').addEventListener('click', fillDemoHistory);
   $('clearHist').addEventListener('click', function () { $('history').value = ''; updateHistInfo(); });
   $('loadToday').addEventListener('click', function () {
     const d = new Date();
