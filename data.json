@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T05:49:40.244Z",
+  "generatedAt": "2026-11-10T04:52:45.527Z",
   "halfLifeDays": 730,
   "games": {
     "ssq": {
@@ -3710,100 +3710,118 @@
       "source": "webapi.sporttery.cn 体彩官方历史开奖接口（分页抓取，单页上限 100 期）",
       "count": 200,
       "latest": {
-        "period": "26127",
-        "date": "2026-11-07",
+        "period": "26128",
+        "date": "2026-11-09",
         "red": [
-          5,
-          6,
-          17,
-          18,
-          27
+          3,
+          13,
+          20,
+          25,
+          34
         ],
         "blue": [
-          3,
+          9,
           12
         ],
-        "pool": 762911586.98,
+        "pool": 758937073.24,
         "sales": 0,
-        "winners": "一等奖 5 注"
+        "winners": "一等奖 9 注"
       },
-      "poolYi": 7.63,
-      "winners": "一等奖 5 注",
+      "poolYi": 7.59,
+      "winners": "一等奖 9 注",
       "hotRed": [
         {
           "n": 26,
-          "weighted": 32.326,
+          "weighted": 32.265,
           "count": 40,
           "last": "2026-10-17"
         },
         {
-          "n": 10,
-          "weighted": 30.111,
-          "count": 37,
-          "last": "2026-10-21"
+          "n": 13,
+          "weighted": 30.317,
+          "count": 38,
+          "last": "2026-11-09"
         },
         {
           "n": 14,
-          "weighted": 30.031,
+          "weighted": 29.974,
           "count": 37,
           "last": "2026-10-31"
         },
         {
-          "n": 13,
-          "weighted": 29.373,
-          "count": 37,
-          "last": "2026-11-02"
+          "n": 10,
+          "weighted": 29.423,
+          "count": 36,
+          "last": "2026-10-21"
+        },
+        {
+          "n": 3,
+          "weighted": 29.306,
+          "count": 36,
+          "last": "2026-11-09"
         },
         {
           "n": 9,
-          "weighted": 29.192,
+          "weighted": 29.137,
           "count": 38,
           "last": "2026-10-17"
         },
         {
-          "n": 3,
-          "weighted": 28.36,
-          "count": 35,
-          "last": "2026-10-19"
-        },
-        {
           "n": 12,
-          "weighted": 26.952,
+          "weighted": 26.901,
           "count": 33,
           "last": "2026-11-02"
         },
         {
           "n": 6,
-          "weighted": 26.002,
+          "weighted": 25.953,
           "count": 32,
           "last": "2026-11-07"
         },
         {
           "n": 18,
-          "weighted": 25.647,
+          "weighted": 25.599,
           "count": 32,
           "last": "2026-11-07"
         },
         {
           "n": 22,
-          "weighted": 24.959,
+          "weighted": 24.911,
           "count": 31,
           "last": "2026-10-31"
         },
         {
           "n": 2,
-          "weighted": 24.918,
+          "weighted": 24.871,
           "count": 32,
           "last": "2026-10-26"
         },
         {
           "n": 5,
-          "weighted": 24.592,
+          "weighted": 24.545,
           "count": 31,
           "last": "2026-11-07"
         }
       ],
       "draws": [
+        {
+          "period": "26128",
+          "date": "2026-11-09",
+          "red": [
+            3,
+            13,
+            20,
+            25,
+            34
+          ],
+          "blue": [
+            9,
+            12
+          ],
+          "pool": 758937073.24,
+          "sales": 0,
+          "winners": "一等奖 9 注"
+        },
         {
           "period": "26127",
           "date": "2026-11-07",
@@ -7385,24 +7403,6 @@
           "pool": 1685844586.78,
           "sales": 0,
           "winners": "一等奖 3 注"
-        },
-        {
-          "period": "25078",
-          "date": "2025-07-12",
-          "red": [
-            7,
-            10,
-            15,
-            21,
-            24
-          ],
-          "blue": [
-            5,
-            6
-          ],
-          "pool": 1653989426.98,
-          "sales": 0,
-          "winners": "一等奖 5 注"
         }
       ]
     }
